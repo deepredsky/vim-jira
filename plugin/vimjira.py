@@ -8,6 +8,7 @@ import webbrowser
 import urllib.request, urllib.error, urllib.parse
 import re
 import os
+import base64
 
 class NestedDict(dict):
     def get(self, path, default = None):
@@ -57,14 +58,19 @@ def bufwrite(string):
         b.append(string)
 
 def read_url(url):
-    opener = urllib2.build_opener()
+    http_handler = urllib.request.HTTPHandler(debuglevel=4)
+    opener = urllib.request.build_opener(http_handler)
     username = os.environ.get('JIRA_USERNAME')
-    password = os.environ.get('JIRA_PASSWORD')
+    password = os.environ.get('JIRA_API_TOKEN')
+    headers = []
     if username is not None and password is not None:
-        base64string = base64.b64encode('%s:%s' % (username, password))
-        opener.add_header("Authorization", "Basic %s" % base64string)
-    opener.addheaders = [('User-Agent', 'Python/vim-jira')]
-    return opener.open(url.encode("UTF-8")).read()
+        data_string = username + ":" + password
+        base64string = base64.b64encode(data_string.encode("utf-8"))
+        opener.addheaders = [("Authorization", "Basic %s" % base64string)]
+        headers.append(("Authorization", "Basic %s" % base64string.decode("utf-8")))
+    headers.append(('Content-Type', 'application/json'))
+    opener.addheaders = headers
+    return opener.open(url).read()
 
 def load_jira(url):
     try:
