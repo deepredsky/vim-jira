@@ -5,7 +5,7 @@ import collections
 import json
 import vim
 import webbrowser
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 import os
 
@@ -39,11 +39,11 @@ def bufwrite(string):
         return
 
     # Vim must be given UTF-8 rather than unicode
-    if isinstance(string, unicode):
+    if isinstance(string, str):
         string = string.encode('utf-8', errors='replace')
 
     # Code block markers for syntax highlighting
-    if string and string[-1] == unichr(160).encode('utf-8'):
+    if string and string[-1] == chr(160).encode('utf-8'):
         b[-1] = string
         return
 
@@ -125,8 +125,8 @@ def build_summary_line(item):
             get_nested_value(item, 'fields.status.name'),
             get_nested_value(item, 'fields.creator.name'),
             get_nested_value(item, 'fields.assignee.name') ]
-    elms = collections.OrderedDict(zip(labels, values))
-    for k in elms.keys():
+    elms = collections.OrderedDict(list(zip(labels, values)))
+    for k in list(elms.keys()):
         if elms[k] is not None:
             summary_items.append(k + ': ' + elms[k])
     return ' | '.join(summary_items)
@@ -136,7 +136,7 @@ def get_nested_value(data, path):
 
 def vim_jira_link(in_browser = False):
     line = vim.current.line
-    print urls[int(line.split()[0].replace('.', ''))]
+    print((urls[int(line.split()[0].replace('.', ''))]))
 
     regexp = re.compile(r'\d+\.')
     if regexp.search(line) is not None:
@@ -160,4 +160,4 @@ def vim_jira_link(in_browser = False):
                     for wrap in line_2:
                         bufwrite(wrap)
             except:
-                print 'vim-jira error: could not parse item'
+                print('vim-jira error: could not parse item')
