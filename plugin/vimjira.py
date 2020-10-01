@@ -32,9 +32,11 @@ class NestedDict(dict):
 def jira_search_url():
     return vim.eval('g:jira_url') + '/rest/api/latest/search?fields=summary,priority,status,creator,assignee,issuetype'
 
-def jira_sprint_issues_url(board_id):
-    sprint_id = get_current_sprint_id(board_id)
-    api_url = vim.eval('g:jira_url') + '/rest/api/latest/search?jql=Sprint=' + str(240) + '&fields=summary,priority,status,creator,assignee,issuetype'
+def jira_sprint_issues_url(board_id, sprint_id=None):
+    if not sprint_id:
+        sprint_id = get_current_sprint_id(board_id)
+
+    api_url = vim.eval('g:jira_url') + '/rest/api/latest/search?jql=Sprint=' + str(sprint_id) + '&fields=summary,priority,status,creator,assignee,issuetype'
     return api_url
 
 def get_current_sprint_id(board_id):
@@ -95,9 +97,9 @@ def load_jira(url):
 
 urls = [None] * 1000 # urls[index]: url of link at index
 
-def vim_jira_sprint():
+def vim_jira_sprint(sprint_id):
     board_id = vim.eval('g:jira_board_id')
-    url = jira_sprint_issues_url(board_id)
+    url = jira_sprint_issues_url(board_id, sprint_id)
     vim_jira(url)
 
 def vim_jira(url = None):
