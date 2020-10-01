@@ -91,7 +91,7 @@ def load_jira(url):
     try:
         return json.loads(read_url(url))
     except:
-        print 'vim-jira error: could not connect to JIRA server'
+        print('vim-jira error: could not connect to JIRA server')
 
 urls = [None] * 1000 # urls[index]: url of link at index
 
