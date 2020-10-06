@@ -109,8 +109,7 @@ def vim_jira(url = None):
     items = load_jira(url)
     if items is not None:
         vim.command('edit .jira')
-        vim.command('setlocal noswapfile')
-        vim.command('setlocal buftype=nofile')
+        vim.command('setlocal buftype=nofile bufhidden=wipe noswapfile nomodeline')
 
         bufwrite("   ___ _             _____")
         bufwrite("  |_  (_)           |_   _|")
@@ -165,10 +164,7 @@ def build_summary_line(item):
 def get_nested_value(data, path):
     return NestedDict(data).get(path)
 
-def vim_jira_link(in_browser = False):
-    line = vim.current.line
-    print((urls[int(line.split()[0].replace('.', ''))]))
-
+def vim_jira_link(line, in_browser = False):
     regexp = re.compile(r'\d+\.')
     if regexp.search(line) is not None:
         id = line.split()[0].replace('.', '')
@@ -176,7 +172,6 @@ def vim_jira_link(in_browser = False):
             browser = webbrowser.get()
             browser.open(urls[int(id)])
             return
-        vim.command('edit .jira')
         item = load_jira(urls[int(id)] + '?fields=summary,description,comment')
         if item is not None:
             try:
