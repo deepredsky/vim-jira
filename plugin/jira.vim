@@ -45,6 +45,7 @@ function! s:open()
   call s:scratch()
   nnoremap <silent> <buffer> q :close<cr>
   python3 vim_jira_link(vim.eval('line'))
+  setlocal wrap
   wincmd p
   nnoremap <silent> <buffer> q    :$wincmd w <bar> close<cr>
   echo
