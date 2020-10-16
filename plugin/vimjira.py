@@ -182,8 +182,8 @@ def vim_jira_link(line, in_browser = False):
 
                 line_2 = item['fields']['description']
                 if line_2 is not None:
-                    line_2 = textwrap.wrap(line_2, width=80)
-                    for wrap in line_2:
+                    t = line_2.replace("\\r", "").replace("\\n", "\n").replace("\r", "").split("\n")
+                    for wrap in t:
                         bufwrite(wrap)
             except:
                 print('vim-jira error: could not parse item')
