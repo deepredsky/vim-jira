@@ -50,6 +50,16 @@ These mappings are available in the jira browser
 - <ctrl-n> <ctrl-p> to go to next/prev issue
 - `q` to close
 
+Single issue can be opened with `Jira` command. it accepts both the issue id
+and key
+
+```vim
+:Jira FOO-1
+:Jira 1234
+```
+
+Without arguments `Jira' will open current list of 50 issues in your project
+
 ## License
 
 This plugin is MIT licensed.
