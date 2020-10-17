@@ -95,7 +95,8 @@ def load_jira(url):
     except:
         print('vim-jira error: could not connect to JIRA server')
 
-urls = [None] * 1000 # urls[index]: url of link at index
+urls = [None] * 1000
+keys = [None] * 1000
 
 def vim_jira_sprint(sprint_id):
     board_id = vim.eval('g:jira_board_id')
@@ -130,6 +131,7 @@ def vim_jira(url = None):
                 bufwrite('')
 
                 urls[i + 1] = item['self']
+                keys[i + 1] = item['key']
             except KeyError:
                 pass
 
@@ -169,8 +171,9 @@ def vim_jira_link(line, in_browser = False):
     if regexp.search(line) is not None:
         id = line.split()[0].replace('.', '')
         if in_browser:
+            url = vim.eval('g:jira_url') + '/browse/' + keys[int(id)]
             browser = webbrowser.get()
-            browser.open(urls[int(id)])
+            browser.open(url)
             return
         item = load_jira(urls[int(id)] + '?fields=summary,description,comment')
         if item is not None:
