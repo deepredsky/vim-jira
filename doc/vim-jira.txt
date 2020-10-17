@@ -1,0 +1,82 @@
+*vim-jira.txt*   Jira stories in vim!
+
+Author:  Rajesh Sharma
+Repo:    https://github.com/deepredsky/vim-jira
+
+==============================================================================
+CONTENTS                                                       *jira-contents*
+
+    1. Installation .....................|JiraInstallation|
+    2. Configuration ................... |JiraConfiguration|
+    3. Usage ........................... |JiraUsage|
+    4. License ......................... |JiraLicense|
+    5. Bugs ............................ |JiraBugs|
+    6. Contributing .................... |JiraContributing|
+
+==============================================================================
+1. Installation                                             *JiraInstallation*
+
+This plugin requires python3
+
+Using {vim-plug}{1}:
+>
+    Plug 'deepredsky/vim-jira'
+<
+{1}: https://github.com/junegunn/vim-plug
+
+==============================================================================
+2. Configuration                                           *JiraConfiguration*
+
+You can configure the following settings which is required to make this plugin work
+
+Set this to board_id and the base url of the jira installation.
+
+>
+    let g:jira_url = 'https://acme.atlassian.net'
+    let g:jira_board_id = 31
+<
+
+Configure username and secret to access your jira installation. Api token can
+be generated at https://id.atlassian.com/manage/api-tokens
+
+>
+    export JIRA_USERNAME=your.jira.email@acme.com
+    export JIRA_API_TOKEN=super-secret-token
+<
+
+==============================================================================
+3. Usage                                                           *JiraUsage*
+
+Open issues browser for the current sprint for your jira board
+>
+  :JiraSprint
+<
+These mappings are available in the jira browser
+
+- `o` or `<cr>` on a issue to display the content of it
+- `]]` and `[[` to move between issues
+- <ctrl-n> <ctrl-p> to go to next/prev issue
+- `q` to close
+
+==============================================================================
+4. License                                                       *JiraLicense*
+
+This plugin is MIT licensed.
+See https://github.com/deepredsky/vim-jira/blob/master/LICENSE
+
+==============================================================================
+5. Bugs                                                             *JiraBugs*
+
+If you find a bug please post it on the issue tracker:
+http://github.com/deepredsky/vim-jira/issues/
+
+==============================================================================
+6. Contributing                                             *JiraContributing*
+
+Think you can make this plugin better?  Awesome!  Fork it on GitHub and send a
+pull request.
+
+GitHub: http://github.com/deepredsky/vim-jira
+
+==============================================================================
+vim:tw=78:sw=2:ts=2:ft=help:norl:nowrap:
