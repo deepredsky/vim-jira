@@ -93,6 +93,7 @@ def load_jira(url):
     try:
         return json.loads(read_url(url))
     except:
+        raise
         print('vim-jira error: could not connect to JIRA server')
 
 urls = [None] * 1000
@@ -102,6 +103,16 @@ def vim_jira_sprint(sprint_id):
     board_id = vim.eval('g:jira_board_id')
     url = jira_sprint_issues_url(board_id, sprint_id)
     vim_jira(url)
+
+def vim_jira_issue(key):
+    url = vim.eval('g:jira_url') + '/rest/api/latest/issue/' + key
+    try:
+        vim.command('edit ' + key)
+        vim.command('setlocal filetype=jira buftype=nofile bufhidden=wipe noswapfile nomodeline')
+        item = load_jira(url + '?fields=summary,description,comment')
+        render_item(item)
+    except :
+        print('vim-jira error: could not get issue ' + key)
 
 def vim_jira(url = None):
     if url is None:
@@ -175,18 +186,22 @@ def vim_jira_link(line, in_browser = False):
             browser = webbrowser.get()
             browser.open(url)
             return
+
         item = load_jira(urls[int(id)] + '?fields=summary,description,comment')
-        if item is not None:
-            try:
-                line_1 = item['key'] + ' : ' + item['fields']['summary']
+        render_item(item)
 
-                bufwrite(line_1)
-                bufwrite('')
+def render_item(item):
+    if item is not None:
+        try:
+            line_1 = item['key'] + ' : ' + item['fields']['summary']
 
-                line_2 = item['fields']['description']
-                if line_2 is not None:
-                    t = line_2.replace("\\r", "").replace("\\n", "\n").replace("\r", "").split("\n")
-                    for wrap in t:
-                        bufwrite(wrap)
-            except:
-                print('vim-jira error: could not parse item')
+            bufwrite(line_1)
+            bufwrite('')
+
+            line_2 = item['fields']['description']
+            if line_2 is not None:
+                t = line_2.replace("\\r", "").replace("\\n", "\n").replace("\r", "").split("\n")
+                for wrap in t:
+                    bufwrite(wrap)
+        except:
+            print('vim-jira error: could not parse item')

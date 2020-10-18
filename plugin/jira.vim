@@ -9,7 +9,7 @@ endif
 
 execute 'python3 import sys'
 execute "python3 sys.path.append(r'" . expand("<sfile>:p:h")  . "')"
-execute "python3 from vimjira import vim_jira, vim_jira_link, vim_jira_sprint"
+execute "python3 from vimjira import vim_jira, vim_jira_issue, vim_jira_link, vim_jira_sprint"
 
 function! JiraSprint(sprintId)
   if exists("g:jira_board_id")
@@ -30,6 +30,14 @@ function! JiraSprint(sprintId)
   else
     echohl ErrorMsg | echo "vim-jira error: g:jira_board_id is not set." | echohl None
     return
+  endif
+endfunction
+
+function! Jira(key)
+  if empty(a:key)
+    python3 vim_jira()
+  else
+    python3 vim_jira_issue(vim.eval('a:key'))
   endif
 endfunction
 
@@ -70,7 +78,7 @@ function! s:scratch()
   setlocal buftype=nofile bufhidden=wipe noswapfile nomodeline
 endfunction
 
-command! -nargs=? Jira python3 vim_jira(<f-args>)
+command! -nargs=? -complete=command Jira call Jira(<q-args>)
 command! -nargs=? -complete=command JiraSprint call JiraSprint(<q-args>)
 
 au! BufRead,BufNewFile *.jira set filetype=jira
