@@ -9,13 +9,13 @@ endif
 
 execute 'python3 import sys'
 execute "python3 sys.path.append(r'" . expand("<sfile>:p:h")  . "')"
-execute "python3 from vimjira import vim_jira, vim_jira_issue, vim_jira_link, vim_jira_sprint"
+execute "python3 from vimjira import vim_jira, vim_jira_issue, open_in_browser, vim_jira_link, vim_jira_sprint"
 
 function! JiraSprint(sprintId)
   if exists("g:jira_board_id")
     python3 vim_jira_sprint(vim.eval('a:sprintId'))
     nnoremap <silent> <buffer> o :call <sid>open()<cr>
-    nnoremap <silent> <buffer> O :call <sid>open_browser()<cr>
+    nnoremap <silent> <buffer> O :call <sid>open_current_line_browser()<cr>
 
     nnoremap <silent> <buffer> <expr> ]] <sid>move('')
     nnoremap <silent> <buffer> <expr> ][ <sid>move('')
@@ -38,6 +38,7 @@ function! Jira(key)
     python3 vim_jira()
   else
     python3 vim_jira_issue(vim.eval('a:key'))
+    nnoremap <silent> <buffer> O :call <sid>open_issue_browser()<cr>
   endif
 endfunction
 
@@ -54,14 +55,21 @@ function! s:open()
   nnoremap <silent> <buffer> q :close<cr>
   python3 vim_jira_link(vim.eval('line'))
   setlocal wrap
+    nnoremap <silent> <buffer> O :call <sid>open_issue_browser()<cr>
   wincmd p
   nnoremap <silent> <buffer> q    :$wincmd w <bar> close<cr>
   echo
 endfunction
 
-function! s:open_browser()
+function! s:open_current_line_browser()
   let line = getline('.')
   python3 vim_jira_link(vim.eval('line'), in_browser=True)
+endfunction
+
+function! s:open_issue_browser()
+    if !empty(b:jira_issue_key)
+        python3 open_in_browser(vim.eval('b:jira_issue_key'))
+    end
 endfunction
 
 function! s:split()

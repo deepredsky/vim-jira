@@ -108,10 +108,12 @@ def vim_jira_issue(key):
     url = vim.eval('g:jira_url') + '/rest/api/latest/issue/' + key
     try:
         vim.command('edit ' + key)
+        vim.command('let b:jira_issue_key = "' + key + '"')
         vim.command('setlocal filetype=jira buftype=nofile bufhidden=wipe noswapfile nomodeline')
         item = load_jira(url + '?fields=summary,description,comment')
         render_item(item)
     except :
+        raise
         print('vim-jira error: could not get issue ' + key)
 
 def vim_jira(url = None):
@@ -177,17 +179,21 @@ def build_summary_line(item):
 def get_nested_value(data, path):
     return NestedDict(data).get(path)
 
+def open_in_browser(key):
+    url = vim.eval('g:jira_url') + '/browse/' + key
+    browser = webbrowser.get()
+    browser.open(url)
+    return
+
 def vim_jira_link(line, in_browser = False):
     regexp = re.compile(r'\d+\.')
     if regexp.search(line) is not None:
         id = line.split()[0].replace('.', '')
         if in_browser:
-            url = vim.eval('g:jira_url') + '/browse/' + keys[int(id)]
-            browser = webbrowser.get()
-            browser.open(url)
-            return
+            return open_in_browser(keys[int(id)])
 
         item = load_jira(urls[int(id)] + '?fields=summary,description,comment')
+        vim.command('let b:jira_issue_key = "' + keys[int(id)] + '"')
         render_item(item)
 
 def render_item(item):
